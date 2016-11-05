@@ -33,16 +33,16 @@ class Robot : public SampleRobot
             m_FRDriveMotor(PortAssign::frDriveMotor),
 			m_leftArmMotor(PortAssign::leftArmMotor),
 			m_rightArmMotor(PortAssign::rightArmMotor),
-            m_joystick(PortAssign::joystick),
-            m_gamepad(PortAssign::gamepad),
 			m_leftPotentiometer(PortAssign::leftPotentiometer),
     		m_rightPotentiometer(PortAssign::rightPotentiometer),
 			m_leftLowerLimit(PortAssign::leftLowerLimit),
 			m_leftUpperLimit(PortAssign::leftUpperLimit),
 			m_rightLowerLimit(PortAssign::rightLowerLimit),
 			m_rightUpperLimit(PortAssign::rightUpperLimit),
+            m_joystick(PortAssign::joystick),
+            m_gamepad(PortAssign::gamepad),
             m_robotDrive(m_FLDriveMotor,m_BLDriveMotor,m_FRDriveMotor,m_BRDriveMotor),
-    		m_arm(m_leftPotentiometer,m_rightPotentiometer,m_leftLowerLimit,m_leftUpperLimit,m_rightLowerLimit,m_rightUpperLimit,m_leftArmMotor,m_rightArmMotor,m_gamepad)
+    		m_arm(&m_leftPotentiometer, &m_rightPotentiometer, &m_leftLowerLimit, &m_leftUpperLimit, &m_rightLowerLimit, &m_rightUpperLimit, &m_leftArmMotor, &m_rightArmMotor, &m_gamepad)
         {
         }
     void Autonomous()
@@ -62,7 +62,7 @@ class Robot : public SampleRobot
             float twist = m_joystick.GetZ();
 
             m_robotDrive.TankDrive((throttle + twist),(throttle - twist));
-
+            m_arm.run();
         }
     }
     void Test()

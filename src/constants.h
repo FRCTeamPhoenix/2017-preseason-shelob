@@ -19,4 +19,21 @@ struct PortAssign
 		const static uint32_t rightUpperLimit = 1002;
 
 };
+
+struct RobotConstants {
+	constexpr static const float maxSaftLimitLeft = 3.6;
+	constexpr static const float maxSaftLimitRight = 3.68;
+	constexpr static const float minSaftLimitLeft = 1.55;
+	constexpr static const float minSaftLimitRight = 1.55;
+};
+
+enum armButtons {
+	buttonBottom = 1,
+	buttonCDF = 2,
+	buttonMiddle = 3,
+	buttonDrawBridge = 4,
+	buttonTop = 5
+};
+
 #endif
+

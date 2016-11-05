@@ -2,7 +2,7 @@
  * Arm.h
  *
  *  Created on: Nov 3, 2016
- *      Author: Bryce Czuba
+ *      Author: joshcal
  */
 
 #ifndef SRC_ARM_H_
@@ -13,6 +13,7 @@
 class Arm {
 private:
 	Joystick * m_gamepad;
+	Joystick * m_armJoystick;
 	AnalogInput * m_leftPotentiometer;
 	AnalogInput * m_rightPotentiometer;
 	DigitalInput * m_leftLowerLimit;
@@ -26,29 +27,35 @@ private:
 public:
 	Arm(
 			AnalogInput * leftPotentiometer,
-				AnalogInput * rightPotentiometer,
-				DigitalInput * leftLowerLimit,
-				DigitalInput * leftUpperLimit,
-				DigitalInput * rightLowerLimit,
-				DigitalInput * rightUpperLimit,
-				Talon * leftArmMotor,
-				Talon * rightArmMotor,
-				Joystick * gamepad);
+			AnalogInput * rightPotentiometer,
+			DigitalInput * leftLowerLimit,
+			DigitalInput * leftUpperLimit,
+			DigitalInput * rightLowerLimit,
+			DigitalInput * rightUpperLimit,
+			Talon * leftArmMotor,
+			Talon * rightArmMotor,
+			Joystick * gamepad);
 
 	void run();
 	float getRightAngle();
 	float getLeftAngle();
 	void getGamepadWithDeadzone();
-	void setState()
+	bool getLimit();
+	void checkLimit();
+	void setState();
 	void stop();
+
+	bool getArmJoystickButton(int);
+
 
 	enum state {
 		Joystick_Control,
 		Button_Control,
 		Idle
-	}
+	};
 
 	virtual ~Arm();
+
 private:
 	state m_state;
 	float m_rightAngle;
@@ -58,6 +65,8 @@ private:
 	float m_rightULimit;
 	float m_leftULimit;
 	float m_gamepadJoystickY;
+	bool m_armButton[5];
+
 
 
 };

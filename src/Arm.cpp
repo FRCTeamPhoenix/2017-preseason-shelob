@@ -2,7 +2,7 @@
  * Arm.cpp
  *
  *  Created on: Nov 3, 2016
- *      Author: Bryce Czuba
+ *      Author: joshcal
  */
 
 #include "Arm.h"
@@ -36,18 +36,19 @@ Arm::Arm(
 void Arm::run(){
 
 	getGamepadWithDeadzone();
+	checkLimit();
 	switch (m_state) {
 
 	case Idle:
 		stop();
-		if (m_gamepadJoystickY == 0) {
+		if (m_gamepadJoystickY && getLimit()) {
 			m_state = Joystick_Control;
 		}
 		break;
 	case Joystick_Control:
 		m_leftArmMotor->Set(m_gamepadJoystickY);
 		m_rightArmMotor->Set(m_gamepadJoystickY);
-		if (m_gamepadJoystickY == 0) {
+		if (m_gamepadJoystickY == 0.0f) {
 			m_state = Idle;
 		}
 		break;
@@ -56,16 +57,57 @@ void Arm::run(){
 	}
 }
 
+void Arm::checkLimit() {
+	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
+	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
+	m_rightULimit = RobotConstants::maxSaftLimitRight;
+	m_rightLLimit = RobotConstants::minSaftLimitRight;
+	m_leftULimit = RobotConstants::maxSaftLimitLeft;
+	m_leftLLimit = RobotConstants::minSaftLimitLeft;
+	if (((rightCurrentVoltage >= m_rightULimit) && (leftCurrentVoltage >= m_leftULimit)) || ((rightCurrentVoltage >= m_rightULimit) || (leftCurrentVoltage >= m_leftULimit))){
+		m_state = Idle;
+	}
+	else if (((rightCurrentVoltage <= m_rightLLimit) && (leftCurrentVoltage <= m_leftLLimit)) || ((rightCurrentVoltage <= m_rightLLimit) || (leftCurrentVoltage <= m_leftLLimit))){
+		m_state = Idle;
+	}
+}
+
+bool Arm::getLimit() {
+	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
+	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
+	m_rightULimit = RobotConstants::maxSaftLimitRight;
+	m_rightLLimit = RobotConstants::minSaftLimitRight;
+	m_leftULimit = RobotConstants::maxSaftLimitLeft;
+	m_leftLLimit = RobotConstants::minSaftLimitLeft;
+	if (((rightCurrentVoltage >= m_rightULimit) && (leftCurrentVoltage >= m_leftULimit)) || ((rightCurrentVoltage >= m_rightULimit) || (leftCurrentVoltage >= m_leftULimit))){
+		return false;
+	}
+	else if (((rightCurrentVoltage <= m_rightLLimit) && (leftCurrentVoltage <= m_leftLLimit)) || ((rightCurrentVoltage <= m_rightLLimit) || (leftCurrentVoltage <= m_leftLLimit))){
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 void Arm::stop(){
-
-
+m_leftArmMotor->Set(0);
+m_rightArmMotor->Set(0);
 }
 
 void Arm::getGamepadWithDeadzone() {
 	m_gamepadJoystickY = m_gamepad->GetY();
 	if (fabs(m_gamepadJoystickY) < 0.05f){
-		m_gamepadJoystickY=0;
+		m_gamepadJoystickY=0.0f;
 	}
+}
+
+bool Arm::getArmJoystickButton(int buttonCode) {
+	for (int i = 1; i < 6; i++) {
+		m_armButton[i] = m_armJoystick->GetRawButton(i);
+	}
+
+	return m_armButton[buttonCode];
 }
 
 Arm::~Arm() {
