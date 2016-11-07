@@ -3,6 +3,9 @@
 #include "DriveTrain.h"
 #include "WPILib.h"
 #include "constants.h"
+#include "plog/Log.h"
+#include "sys/stat.h"
+
 using namespace std;
 
 class Robot : public SampleRobot
@@ -44,6 +47,8 @@ class Robot : public SampleRobot
             m_robotDrive(m_FLDriveMotor,m_BLDriveMotor,m_FRDriveMotor,m_BRDriveMotor),
     		m_arm(&m_leftPotentiometer, &m_rightPotentiometer, &m_leftLowerLimit, &m_leftUpperLimit, &m_rightLowerLimit, &m_rightUpperLimit, &m_leftArmMotor, &m_rightArmMotor, &m_gamepad)
         {
+        	plog::init(plog::debug, "/home/lvuser/robot_logger.txt");
+   		    LOGD << "-------------------------New Run-------------------------";
         }
     void Autonomous()
     {

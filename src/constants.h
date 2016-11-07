@@ -13,18 +13,18 @@ struct PortAssign
 		const static uint32_t rightPotentiometer = 1;
 		const static uint32_t leftArmMotor = 7;
 		const static uint32_t rightArmMotor = 8;
-		const static uint32_t leftLowerLimit = 999;
-		const static uint32_t leftUpperLimit = 1000;
-		const static uint32_t rightLowerLimit = 1001;
-		const static uint32_t rightUpperLimit = 1002;
+		const static uint32_t leftLowerLimit = 4;
+		const static uint32_t leftUpperLimit = 5;
+		const static uint32_t rightLowerLimit = 6;
+		const static uint32_t rightUpperLimit = 7;
 
 };
 
 struct RobotConstants {
-	constexpr static const float maxSaftLimitLeft = 3.6;
-	constexpr static const float maxSaftLimitRight = 3.68;
-	constexpr static const float minSaftLimitLeft = 1.55;
-	constexpr static const float minSaftLimitRight = 1.55;
+	constexpr static const float maxSaftLimitLeft = 3.50f;
+	constexpr static const float maxSaftLimitRight = 3.50f;
+	constexpr static const float minSaftLimitLeft = 1.46f;
+	constexpr static const float minSaftLimitRight = 1.46f;
 };
 
 enum armButtons {

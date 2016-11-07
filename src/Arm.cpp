@@ -6,6 +6,8 @@
  */
 
 #include "Arm.h"
+#include "plog/Log.h"
+#include "sys/stat.h"
 
 Arm::Arm(
 		AnalogInput * leftPotentiometer,
@@ -36,18 +38,22 @@ Arm::Arm(
 void Arm::run(){
 
 	getGamepadWithDeadzone();
-	checkLimit();
+	logVoltage();
 	switch (m_state) {
 
 	case Idle:
 		stop();
-		if (m_gamepadJoystickY && getLimit()) {
+		if (m_gamepadJoystickY) {
 			m_state = Joystick_Control;
 		}
 		break;
 	case Joystick_Control:
 		m_leftArmMotor->Set(m_gamepadJoystickY);
 		m_rightArmMotor->Set(m_gamepadJoystickY);
+		if (((m_gamepadJoystickY > 0) && checkUpperLimit()) ||
+			((m_gamepadJoystickY < 0) && checkLowerLimit())) {
+			m_state = Idle;
+		}
 		if (m_gamepadJoystickY == 0.0f) {
 			m_state = Idle;
 		}
@@ -57,37 +63,40 @@ void Arm::run(){
 	}
 }
 
-void Arm::checkLimit() {
+bool Arm::checkLowerLimit() {
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
-	m_rightULimit = RobotConstants::maxSaftLimitRight;
 	m_rightLLimit = RobotConstants::minSaftLimitRight;
-	m_leftULimit = RobotConstants::maxSaftLimitLeft;
 	m_leftLLimit = RobotConstants::minSaftLimitLeft;
-	if (((rightCurrentVoltage >= m_rightULimit) && (leftCurrentVoltage >= m_leftULimit)) || ((rightCurrentVoltage >= m_rightULimit) || (leftCurrentVoltage >= m_leftULimit))){
-		m_state = Idle;
-	}
-	else if (((rightCurrentVoltage <= m_rightLLimit) && (leftCurrentVoltage <= m_leftLLimit)) || ((rightCurrentVoltage <= m_rightLLimit) || (leftCurrentVoltage <= m_leftLLimit))){
-		m_state = Idle;
-	}
+	bool belowLimitLeft = (leftCurrentVoltage <= m_leftLLimit);
+	bool belowLimitRight = (rightCurrentVoltage <= m_rightLLimit);
+	return (belowLimitLeft || belowLimitRight);
 }
 
-bool Arm::getLimit() {
+bool Arm::checkUpperLimit() {
+	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
+	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
+	m_leftULimit = RobotConstants::maxSaftLimitLeft;
+	m_rightULimit = RobotConstants::maxSaftLimitRight;
+	bool aboveLimitLeft = (leftCurrentVoltage >= m_leftULimit);
+	bool aboveLimitRight = (rightCurrentVoltage >= m_rightULimit);
+	return (aboveLimitLeft || aboveLimitRight);
+}
+
+void Arm::logVoltage() {
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_rightULimit = RobotConstants::maxSaftLimitRight;
 	m_rightLLimit = RobotConstants::minSaftLimitRight;
 	m_leftULimit = RobotConstants::maxSaftLimitLeft;
 	m_leftLLimit = RobotConstants::minSaftLimitLeft;
-	if (((rightCurrentVoltage >= m_rightULimit) && (leftCurrentVoltage >= m_leftULimit)) || ((rightCurrentVoltage >= m_rightULimit) || (leftCurrentVoltage >= m_leftULimit))){
-		return false;
-	}
-	else if (((rightCurrentVoltage <= m_rightLLimit) && (leftCurrentVoltage <= m_leftLLimit)) || ((rightCurrentVoltage <= m_rightLLimit) || (leftCurrentVoltage <= m_leftLLimit))){
-		return false;
-	}
-	else {
-		return true;
-	}
+
+	bool outsideLimitLeft = (leftCurrentVoltage >= m_leftULimit) || (leftCurrentVoltage <= m_leftLLimit);
+	bool outsideLimitRight = (rightCurrentVoltage >= m_rightULimit) || (rightCurrentVoltage <= m_rightLLimit);
+	LOGD << "RIGHT VOLTAGE: " << rightCurrentVoltage;
+	LOGD << "LEFT VOLTAGE: " << leftCurrentVoltage;
+	LOGD << "RIGHT LIMIT: " << outsideLimitRight;
+	LOGD << "LEFT LIMIT: " << outsideLimitLeft;
 }
 
 void Arm::stop(){
@@ -96,7 +105,7 @@ m_rightArmMotor->Set(0);
 }
 
 void Arm::getGamepadWithDeadzone() {
-	m_gamepadJoystickY = m_gamepad->GetY();
+	m_gamepadJoystickY = -m_gamepad->GetY();
 	if (fabs(m_gamepadJoystickY) < 0.05f){
 		m_gamepadJoystickY=0.0f;
 	}

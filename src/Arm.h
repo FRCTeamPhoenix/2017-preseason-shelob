@@ -40,8 +40,9 @@ public:
 	float getRightAngle();
 	float getLeftAngle();
 	void getGamepadWithDeadzone();
-	bool getLimit();
-	void checkLimit();
+	void logVoltage();
+	bool checkLowerLimit();
+	bool checkUpperLimit();
 	void setState();
 	void stop();
 
