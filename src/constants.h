@@ -11,4 +11,21 @@ struct PortAssign
         const static uint32_t gamepad = 1;
 
 };
+
+enum buttonNames {
+   buttonX = 0,
+   buttonA = 1,
+   buttonB = 2,
+   buttonY = 3,
+   buttonLB = 4,
+   buttonRB = 5,
+   triggerLT = 6,
+   triggerRT = 7,
+   buttonBack = 8,
+   buttonStart = 9,
+   joystickLeftButton = 10,
+   joystickRightButton = 11
+};
+
+
 #endif
