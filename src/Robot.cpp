@@ -1,6 +1,7 @@
 #include <iostream>
-#include "Arm.h"
+#include "Loader.h"
 #include "DriveTrain.h"
+#include "Arm.h"
 #include "WPILib.h"
 #include "constants.h"
 #include "plog/Log.h"
@@ -14,18 +15,14 @@ class Robot : public SampleRobot
         Talon m_FLDriveMotor;
         Talon m_BRDriveMotor;
         Talon m_FRDriveMotor;
-        Talon m_leftArmMotor;
-        Talon m_rightArmMotor;
-        AnalogInput m_leftPotentiometer;
-        AnalogInput m_rightPotentiometer;
-        DigitalInput m_leftLowerLimit;
-        DigitalInput m_leftUpperLimit;
-        DigitalInput m_rightLowerLimit;
-        DigitalInput m_rightUpperLimit;
+        Talon m_loaderMotor;
+        DigitalInput m_lightSensor;
         Joystick m_joystick;
         Joystick m_gamepad;
-        RobotDrive m_robotDrive;
         Arm m_arm;
+        DriveTrain m_driveTrain;
+        Loader m_loader;
+
 
 
     public:
@@ -34,21 +31,13 @@ class Robot : public SampleRobot
             m_FLDriveMotor(PortAssign::flDriveMotor),
             m_BRDriveMotor(PortAssign::brDriveMotor),
             m_FRDriveMotor(PortAssign::frDriveMotor),
-			m_leftArmMotor(PortAssign::leftArmMotor),
-			m_rightArmMotor(PortAssign::rightArmMotor),
-			m_leftPotentiometer(PortAssign::leftPotentiometer),
-    		m_rightPotentiometer(PortAssign::rightPotentiometer),
-			m_leftLowerLimit(PortAssign::leftLowerLimit),
-			m_leftUpperLimit(PortAssign::leftUpperLimit),
-			m_rightLowerLimit(PortAssign::rightLowerLimit),
-			m_rightUpperLimit(PortAssign::rightUpperLimit),
+			m_loaderMotor(PortAssign::loaderMotor),
+			m_lightSensor(PortAssign::lightSensor),
             m_joystick(PortAssign::joystick),
             m_gamepad(PortAssign::gamepad),
-            m_robotDrive(m_FLDriveMotor,m_BLDriveMotor,m_FRDriveMotor,m_BRDriveMotor),
-    		m_arm(&m_leftPotentiometer, &m_rightPotentiometer, &m_leftLowerLimit, &m_leftUpperLimit, &m_rightLowerLimit, &m_rightUpperLimit, &m_leftArmMotor, &m_rightArmMotor, &m_gamepad)
+			m_loader(&m_loaderMotor, &m_lightSensor, &m_gamepad, &m_joystick),
+			m_driveTrain(&m_BLDriveMotor,&m_FLDriveMotor,&m_FRDriveMotor,&m_BRDriveMotor,&m_joystick)
         {
-        	plog::init(plog::debug, "/home/lvuser/robot_logger.txt");
-   		    LOGD << "-------------------------New Run-------------------------";
         }
     void Autonomous()
     {
@@ -59,15 +48,11 @@ class Robot : public SampleRobot
     }
     void OperatorControl()
     {
-        m_robotDrive.SetSafetyEnabled(false);
+        m_driveTrain.safety();
         while(IsOperatorControl() && IsEnabled())
         {
-
-            float throttle = m_joystick.GetY();
-            float twist = m_joystick.GetZ();
-
-            m_robotDrive.TankDrive((throttle + twist),(throttle - twist));
-            m_arm.run();
+        	m_driveTrain.run();
+            m_loader.run();
         }
     }
     void Test()

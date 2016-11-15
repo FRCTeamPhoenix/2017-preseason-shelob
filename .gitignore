@@ -70,3 +70,8 @@ CMakeLists.txt
 # For emacs auto-save files
 *~
 
+Debug/FRCUserProgram
+*.xml
+.settings/language.settings.xml
+Debug/FRCUserProgram
+*.o
