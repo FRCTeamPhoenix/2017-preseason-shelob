@@ -6,6 +6,7 @@
  */
 
 #include "WPILib.h"
+#include "constants.h"
 #ifndef SRC_LOADER_H_
 #define SRC_LOADER_H_
 

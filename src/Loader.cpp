@@ -36,7 +36,7 @@ void Loader::setState(state state)
 
 void Loader::stop()
 {
-	m_motor->Set(0);
+	m_motor->Set(0.0f);
 }
 
 void Loader::run()
@@ -95,4 +95,3 @@ void Loader::run()
 Loader::~Loader() {
 	// TODO Auto-generated destructor stub
 }
-
