@@ -10,6 +10,4 @@ class DriveTrain
     private:
         float joystickFNB;
         float joystickRNL;
-
-
 };
