@@ -30,7 +30,7 @@ class Robot : public SampleRobot
 	Loader m_loader;
 	Arm m_arm;
 	DriveTrain m_driveTrain;
-
+	Shooter m_shooter;
 
 
 public:
@@ -69,8 +69,9 @@ public:
 		while(IsOperatorControl() && IsEnabled())
 		{
 			m_driveTrain.run();
-			//m_arm.run();
+			m_arm.run();
 			m_loader.run();
+
 		}
 	}
 	void Test()
@@ -80,5 +81,6 @@ public:
 
 		}
 	}
+
 };
 START_ROBOT_CLASS(Robot)

@@ -55,5 +55,4 @@ enum buttonNames
    joystickRightButton = 11
 };
 
-
 #endif
