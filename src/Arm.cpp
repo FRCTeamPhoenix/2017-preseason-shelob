@@ -9,52 +9,58 @@
 #include "plog/Log.h"
 #include "sys/stat.h"
 
+// Arm Function Caller
 Arm::Arm(
 		AnalogInput * leftPotentiometer,
-			AnalogInput * rightPotentiometer,
-			DigitalInput * leftLowerLimit,
-			DigitalInput * leftUpperLimit,
-			DigitalInput * rightLowerLimit,
-			DigitalInput * rightUpperLimit,
-			Talon * leftArmMotor,
-			Talon * rightArmMotor,
-			Joystick * gamepad):
-
-			m_leftPotentiometer(leftPotentiometer),
-			m_rightPotentiometer(rightPotentiometer),
-			m_leftLowerLimit(leftLowerLimit),
-			m_leftUpperLimit(leftUpperLimit),
-			m_rightLowerLimit(rightLowerLimit),
-			m_rightUpperLimit(rightUpperLimit),
-			m_leftArmMotor(leftArmMotor),
-			m_rightArmMotor(rightArmMotor),
-			m_gamepad(gamepad)
-			{
+		AnalogInput * rightPotentiometer,
+		DigitalInput * leftLowerLimit,
+		DigitalInput * leftUpperLimit,
+		DigitalInput * rightLowerLimit,
+		DigitalInput * rightUpperLimit,
+		Talon * leftArmMotor,
+		Talon * rightArmMotor,
+		Joystick * gamepad
+//		Joystick * armJoystick
+		):
+		m_leftPotentiometer(leftPotentiometer),
+		m_rightPotentiometer(rightPotentiometer),
+		m_leftLowerLimit(leftLowerLimit),
+		m_leftUpperLimit(leftUpperLimit),
+		m_rightLowerLimit(rightLowerLimit),
+		m_rightUpperLimit(rightUpperLimit),
+		m_leftArmMotor(leftArmMotor),
+		m_rightArmMotor(rightArmMotor),
+		m_gamepad(gamepad)
+		//m_armJoystick(armJoystick)
+{
 	// TODO Auto-generated constructor stub
 	m_state = Arm::state::Idle;
 
 }
 
-void Arm::run(){
-
+void Arm::run()
+{
 	getGamepadWithDeadzone();
 	logVoltage();
-	switch (m_state) {
-
+	switch (m_state)
+	{
 	case Idle:
 		stop();
-		if (m_gamepadJoystickY) {
+		if (m_gamepadJoystickY)
+		{
 			m_state = Joystick_Control;
 		}
 		break;
 	case Joystick_Control:
-		m_leftArmMotor->Set(m_gamepadJoystickY);
-		m_rightArmMotor->Set(m_gamepadJoystickY);
-		if (((m_gamepadJoystickY > 0) && checkUpperLimit()) ||
-			((m_gamepadJoystickY < 0) && checkLowerLimit())) {
+		m_leftArmMotor->Set((m_gamepadJoystickY/0.75));
+		m_rightArmMotor->Set((m_gamepadJoystickY/0.8));
+		if (((m_gamepadJoystickY > 0)  && checkUpperLimit() )  ||
+				((m_gamepadJoystickY < 0)  && checkLowerLimit()))
+		{
 			m_state = Idle;
 		}
-		if (m_gamepadJoystickY == 0.0f) {
+		else if (m_gamepadJoystickY == 0.0f)
+		{
 			m_state = Idle;
 		}
 		break;
@@ -63,7 +69,8 @@ void Arm::run(){
 	}
 }
 
-bool Arm::checkLowerLimit() {
+bool Arm::checkLowerLimit()
+{
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_rightLLimit = RobotConstants::minSaftLimitRight;
@@ -73,7 +80,8 @@ bool Arm::checkLowerLimit() {
 	return (belowLimitLeft || belowLimitRight);
 }
 
-bool Arm::checkUpperLimit() {
+bool Arm::checkUpperLimit()
+{
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_leftULimit = RobotConstants::maxSaftLimitLeft;
@@ -83,7 +91,8 @@ bool Arm::checkUpperLimit() {
 	return (aboveLimitLeft || aboveLimitRight);
 }
 
-void Arm::logVoltage() {
+void Arm::logVoltage()
+{  // Logging the voltage to check to see if the limits work
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_rightULimit = RobotConstants::maxSaftLimitRight;
@@ -99,20 +108,25 @@ void Arm::logVoltage() {
 	LOGD << "LEFT LIMIT: " << outsideLimitLeft;
 }
 
-void Arm::stop(){
-m_leftArmMotor->Set(0);
-m_rightArmMotor->Set(0);
+void Arm::stop()
+{
+	m_leftArmMotor->Set(0);
+	m_rightArmMotor->Set(0);
 }
 
-void Arm::getGamepadWithDeadzone() {
+void Arm::getGamepadWithDeadzone()
+{
 	m_gamepadJoystickY = -m_gamepad->GetY();
-	if (fabs(m_gamepadJoystickY) < 0.05f){
+	if (fabs(m_gamepadJoystickY) < 0.05f)
+	{
 		m_gamepadJoystickY=0.0f;
 	}
 }
 
-bool Arm::getArmJoystickButton(int buttonCode) {
-	for (int i = 1; i < 6; i++) {
+bool Arm::getArmJoystickButton(int buttonCode)
+{
+	for (int i = 1; i < 6; i++)
+	{
 		m_armButton[i] = m_armJoystick->GetRawButton(i);
 	}
 

@@ -10,10 +10,9 @@
 #include "WPILib.h"
 #include "constants.h"
 
-class Arm {
+class Arm
+{
 private:
-	Joystick * m_gamepad;
-	Joystick * m_armJoystick;
 	AnalogInput * m_leftPotentiometer;
 	AnalogInput * m_rightPotentiometer;
 	DigitalInput * m_leftLowerLimit;
@@ -22,6 +21,8 @@ private:
 	DigitalInput * m_rightUpperLimit;
 	Talon * m_leftArmMotor;
 	Talon * m_rightArmMotor;
+	Joystick * m_gamepad;
+	Joystick * m_armJoystick;
 
 
 public:
@@ -36,20 +37,21 @@ public:
 			Talon * rightArmMotor,
 			Joystick * gamepad);
 
-	void run();
-	float getRightAngle();
-	float getLeftAngle();
-	void getGamepadWithDeadzone();
-	void logVoltage();
-	bool checkLowerLimit();
-	bool checkUpperLimit();
-	void setState();
-	void stop();
+	void run(); // Arm Controller with state switches
+	float getRightAngle(); // Angles of right arm
+	float getLeftAngle(); // Angles of left arm
+	void getGamepadWithDeadzone(); // Controller input more reasonable.
+	void logVoltage(); // Voltage
+	bool checkLowerLimit(); // Limit check Down
+	bool checkUpperLimit(); // Limit check Up
+	void setState(); // Change state
+	void stop(); // Stop the robot
 
-	bool getArmJoystickButton(int);
+	bool getArmJoystickButton(int); // Joystick Button
 
-
-	enum state {
+	// State controller for the state of the Arm
+	enum state
+	{
 		Joystick_Control,
 		Button_Control,
 		Idle

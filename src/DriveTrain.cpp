@@ -22,18 +22,17 @@ m_joystick(joystick),
 m_robotDrive(m_FL_WHEEL_MOTOR,m_BL_WHEEL_MOTOR,m_FR_WHEEL_MOTOR,m_BR_WHEEL_MOTOR)
 {
 	// TODO Auto-generated constructor stub
-	m_joystickZ = 0;
-	m_joystickY = 0;
 	m_state = DriveTrain::state::Idle;
 }
 
-void DriveTrain::safety() {
+void DriveTrain::safety()
+{
 	m_robotDrive.SetSafetyEnabled(false);
 }
 
 void DriveTrain::joystickWithDeadZoneY()
 {
-	m_joystickY = -m_joystick->GetY();
+	m_joystickY = (-m_joystick->GetY()/2);
 	if (fabs(m_joystickY) < 0.05f)
 	{
 		m_joystickY=0.0f;
@@ -42,8 +41,8 @@ void DriveTrain::joystickWithDeadZoneY()
 
 void DriveTrain::joystickWithDeadZoneZ()
 {
-	m_joystickZ = -m_joystick->GetZ();
-	if (fabs(m_joystickZ) < 0.05f)
+	m_joystickZ = (m_joystick->GetZ()/2);
+	if (fabs(m_joystickZ) < 0.15f)
 	{
 		m_joystickZ=0.0f;
 	}
@@ -51,7 +50,7 @@ void DriveTrain::joystickWithDeadZoneZ()
 
 void DriveTrain::stop()
 {
-	m_BL_WHEEL_MOTOR->Set(0.0);
+	m_BL_WHEEL_MOTOR->Set(0.0f);
 	m_FL_WHEEL_MOTOR->Set(0.0f);
 	m_FR_WHEEL_MOTOR->Set(0.0f);
 	m_BR_WHEEL_MOTOR->Set(0.0f);
@@ -60,9 +59,11 @@ void DriveTrain::stop()
 void DriveTrain::move()
 {
 	m_robotDrive.TankDrive((m_joystickY + m_joystickZ),(m_joystickY - m_joystickZ));
+//	m_robotDrive.TankDrive(m_joystickZ,m_joystickZ);
 }
 
-void DriveTrain::run() {
+void DriveTrain::run()
+{
 	joystickWithDeadZoneY();
 	joystickWithDeadZoneZ();
 	switch (m_state)
@@ -78,7 +79,7 @@ void DriveTrain::run() {
 
 	case Controll:
 		move();
-		if (m_joystickY && m_joystickZ)
+		if (m_joystickY || m_joystickZ)
 		{
 			break;
 		}

@@ -45,4 +45,5 @@ public:
 
 private:
 	state m_state;
+
 };

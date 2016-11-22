@@ -44,6 +44,7 @@ void Loader::run()
 	switch (m_state) {
 	case Idle:
 		stop();
+//		if (!m_gamepad->GetRawButton(buttonNames::buttonA) || !m_gamepad->GetRawButton(buttonNames::buttonB) )
 		if(m_gamepad->GetRawButton(buttonNames::buttonA))
 		{
 			setState(In);

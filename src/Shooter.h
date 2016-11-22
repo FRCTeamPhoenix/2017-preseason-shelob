@@ -12,28 +12,31 @@
 
 class Shooter
 {
-        Talon* m_leftFlywheelMotor;
-        Talon* m_rightFlywheelMotor;
+	bool m_isActivated;
 
-        Joystick* m_gamepad;
+public:
+	Shooter(Talon* leftFlywheelMotor, Talon* rightFlywheelMotor, Joystick* gamepad);
+	virtual ~Shooter();
 
-        bool m_isActivated;
 
-    public:
-        Shooter(Talon* leftFlywheelMotor, Talon* rightFlywheelMotor, Joystick* gamepad);
-        virtual ~Shooter();
+	enum state
+	{
+		IDLE,
+		ON,
+		OFF
+	};
 
-        enum STATE
-        {
-            OFF,
-            ON
-        };
+	void run();
+	void start();
+	void stop();
+	state getCurrentState();
 
-        void run();
-        void start();
-        void stop();
-        STATE getCurrentState();
 
+private:
+	state m_state;
+	Talon* m_leftFlywheelMotor;
+	Talon* m_rightFlywheelMotor;
+	Joystick* m_gamepad;
 };
 
 #endif /* SRC_SHOOTER_H_ */
