@@ -9,13 +9,14 @@
 #define SRC_SHOOTER_H_
 #include "WPILib.h"
 #include "constants.h"
+#include "Loader.h"
 
 class Shooter
 {
 	bool m_isActivated;
 
 public:
-	Shooter(Talon* leftFlywheelMotor, Talon* rightFlywheelMotor, Joystick* gamepad);
+	Shooter(Talon * leftFlywheelMotor, Talon * rightFlywheelMotor, Joystick * joystick, Loader * loader);
 	virtual ~Shooter();
 
 
@@ -23,20 +24,23 @@ public:
 	{
 		IDLE,
 		ON,
-		OFF
+		OFF,
+		AUTO
 	};
 
 	void run();
 	void start();
 	void stop();
 	state getCurrentState();
+	void autoShoot();
 
 
 private:
 	state m_state;
 	Talon* m_leftFlywheelMotor;
 	Talon* m_rightFlywheelMotor;
-	Joystick* m_gamepad;
+	Joystick * m_joystick;
+	Loader * m_loader;
 };
 
 #endif /* SRC_SHOOTER_H_ */

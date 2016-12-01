@@ -12,14 +12,14 @@ Loader::Loader(
 		Talon * motor,
 		DigitalInput * lightSensor,
 		Joystick * gamepad,
-		Joystick * joystick) {
+		Joystick * joystick)
+{
 	// TODO Auto-generated constructor stub
 	m_motor = motor;
 	m_lightSensor = lightSensor;
 	m_gamepad = gamepad;
 	m_joystick = joystick;
 	m_oldSensorState = m_lightSensor->Get();
-
 	m_state = Idle;
 }
 
@@ -28,11 +28,26 @@ bool Loader::sensorChange()
 	return(m_oldSensorState != m_lightSensor->Get());
 }
 
+bool Loader::getSenserState()
+{
+	return m_oldSensorState;
+}
+
 void Loader::setState(state state)
 {
 	m_state = state;
 }
 
+void Loader::load()
+{
+	m_motor->Set(-1.0f);
+	Wait(0.01f);
+}
+
+void Loader::unLoad()
+{
+	m_motor->Set(1.0f);
+}
 
 void Loader::stop()
 {
@@ -88,8 +103,6 @@ void Loader::run()
 		break;
 	}
 	m_oldSensorState = m_lightSensor->Get();
-
-
 }
 
 

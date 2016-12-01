@@ -52,8 +52,8 @@ void Arm::run()
 		}
 		break;
 	case Joystick_Control:
-		m_leftArmMotor->Set((m_gamepadJoystickY/0.75));
-		m_rightArmMotor->Set((m_gamepadJoystickY/0.8));
+		m_leftArmMotor->Set((m_gamepadJoystickY * 0.5));
+		m_rightArmMotor->Set((m_gamepadJoystickY * 0.5));
 		if (((m_gamepadJoystickY > 0)  && checkUpperLimit() )  ||
 				((m_gamepadJoystickY < 0)  && checkLowerLimit()))
 		{
@@ -77,7 +77,7 @@ bool Arm::checkLowerLimit()
 	m_leftLLimit = RobotConstants::minSaftLimitLeft;
 	bool belowLimitLeft = (leftCurrentVoltage <= m_leftLLimit);
 	bool belowLimitRight = (rightCurrentVoltage <= m_rightLLimit);
-	return (belowLimitLeft || belowLimitRight);
+	return (belowLimitLeft && belowLimitRight);
 }
 
 bool Arm::checkUpperLimit()
@@ -88,7 +88,7 @@ bool Arm::checkUpperLimit()
 	m_rightULimit = RobotConstants::maxSaftLimitRight;
 	bool aboveLimitLeft = (leftCurrentVoltage >= m_leftULimit);
 	bool aboveLimitRight = (rightCurrentVoltage >= m_rightULimit);
-	return (aboveLimitLeft || aboveLimitRight);
+	return (aboveLimitLeft && aboveLimitRight);
 }
 
 void Arm::logVoltage()

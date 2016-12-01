@@ -30,22 +30,31 @@ void DriveTrain::safety()
 	m_robotDrive.SetSafetyEnabled(false);
 }
 
+// joystick throttle is meant to be used as a resistance for the driver train.
+// added throttle function
+void DriveTrain::joystickWithThrottle() {
+	 m_joystickThrottle = -(0.5 * m_joystick->GetThrottle()) + 0.5;
+}
+
 void DriveTrain::joystickWithDeadZoneY()
 {
-	m_joystickY = (-m_joystick->GetY()/2);
+	m_joystickY = -m_joystick->GetY();//* m_joystickThrottle;
 	if (fabs(m_joystickY) < 0.05f)
 	{
 		m_joystickY=0.0f;
 	}
+	m_joystickY = m_joystickY * m_joystickThrottle;
 }
 
 void DriveTrain::joystickWithDeadZoneZ()
 {
-	m_joystickZ = (m_joystick->GetZ()/2);
+	m_joystickZ = m_joystick->GetZ();
 	if (fabs(m_joystickZ) < 0.15f)
 	{
 		m_joystickZ=0.0f;
 	}
+	m_joystickZ = m_joystickZ * m_joystickThrottle;
+
 }
 
 void DriveTrain::stop()
@@ -62,15 +71,42 @@ void DriveTrain::move()
 //	m_robotDrive.TankDrive(m_joystickZ,m_joystickZ);
 }
 
+bool DriveTrain::isMoving() {
+	// TODO Move Constants
+	if ((m_joystickY && m_joystickZ))
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+bool DriveTrain::moving() {
+	// TODO Move Constants
+	if ((m_joystickY || m_joystickZ))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
+
 void DriveTrain::run()
 {
+	joystickWithThrottle();
 	joystickWithDeadZoneY();
 	joystickWithDeadZoneZ();
 	switch (m_state)
 	{
 	case Idle:
 		stop();
-		if (!m_joystickY && !m_joystickZ)
+		if (!isMoving())
 		{
 			break;
 		}
@@ -79,7 +115,7 @@ void DriveTrain::run()
 
 	case Controll:
 		move();
-		if (m_joystickY || m_joystickZ)
+		if (moving())
 		{
 			break;
 		}

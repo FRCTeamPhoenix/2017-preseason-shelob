@@ -6,7 +6,6 @@
 #include "constants.h"
 #include "plog/Log.h"
 #include "sys/stat.h"
-#include "AutoShooter.h"
 #include "Shooter.h"
 using namespace std;
 
@@ -34,7 +33,6 @@ class Robot : public SampleRobot
 	Arm m_arm;
 	DriveTrain m_driveTrain;
 	Shooter m_shooter;
-	AutoShooter m_autoShooter;
 
 
 
@@ -61,8 +59,7 @@ public:
 		m_loader(&m_loaderMotor, &m_lightSensor, &m_gamepad, &m_joystick),
 		m_arm(&m_leftPotentiometer, &m_rightPotentiometer, &m_leftLowerLimit, &m_leftUpperLimit, &m_rightLowerLimit, &m_rightUpperLimit, &m_leftArmMotor, &m_rightArmMotor, &m_gamepad),
 		m_driveTrain(&m_BLDriveMotor,&m_FLDriveMotor,&m_FRDriveMotor,&m_BRDriveMotor,&m_joystick),
-		m_shooter(&m_leftFlywheelMotor,&m_rightFlywheelMotor,&m_joystick),
-		m_autoShooter(&m_leftFlywheelMotor,&m_rightFlywheelMotor,&m_loaderMotor,&m_lightSensor,&m_joystick)
+		m_shooter(&m_leftFlywheelMotor,&m_rightFlywheelMotor,&m_joystick, &m_loader)
 {
 }
 	void Autonomous()
@@ -81,7 +78,6 @@ public:
 			m_arm.run();
 			m_loader.run();
 			m_shooter.run();
-			m_autoShooter.run(); // not tested yet gonna test now...
 		}
 	}
 	void Test()

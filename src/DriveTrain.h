@@ -13,6 +13,8 @@ class DriveTrain
 private:
 	float m_joystickY;
 	float m_joystickZ;
+	float m_joystickThrottle;
+
 	Talon * m_BL_WHEEL_MOTOR;
 	Talon * m_BR_WHEEL_MOTOR;
 	Talon * m_FL_WHEEL_MOTOR;
@@ -35,7 +37,10 @@ public:
 	void stop();
 	void joystickWithDeadZoneY();
 	void joystickWithDeadZoneZ();
+	void joystickWithThrottle();
 	void safety();
+	bool isMoving();
+	bool moving();
 
 	enum state {
 		Idle,

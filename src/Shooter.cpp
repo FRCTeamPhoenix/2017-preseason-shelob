@@ -10,17 +10,37 @@
 Shooter::Shooter(
 		Talon * leftFlywheelMotor,
 		Talon * rightFlywheelMotor,
-		Joystick * gamepad):
-		m_leftFlywheelMotor(leftFlywheelMotor),
-		m_rightFlywheelMotor(rightFlywheelMotor),
-		m_gamepad(gamepad)
+		Joystick * joystick,
+		Loader * loader):
+		m_loader(loader)
 {
+	m_leftFlywheelMotor = leftFlywheelMotor;
+	m_rightFlywheelMotor = rightFlywheelMotor;
 	m_isActivated = false;
 	m_state = IDLE;
+	m_joystick = joystick;
 }
 
 Shooter::~Shooter()
 {
+}
+
+void Shooter::autoShoot()
+{
+	m_loader->getSenserState();
+	m_loader->load();
+	Wait(0.05);
+	if (m_loader->sensorChange())
+	{
+		m_loader->stop();
+		Wait(0.05);
+		start();
+		Wait(1.5);
+		m_loader->load();
+		Wait(0.4);
+		stop();
+		m_loader->stop();
+	}
 }
 
 void Shooter::run()
@@ -29,27 +49,42 @@ void Shooter::run()
 	{
 	case IDLE:
 		stop();
-		if (m_gamepad->GetRawButton(DriveStationConstants::buttonjNames::button2))
+		if (m_joystick->GetRawButton(DriveStationConstants::buttonjNames::button2))
 		{
 			m_state = ON;
+			break;
+		}
+
+		if (m_joystick->GetRawButton(DriveStationConstants::buttonjNames::trigger))
+		{
+			m_state = AUTO;
 			break;
 		}
 		break;
 
 	case ON:
 		start();
-		if (!m_gamepad->GetRawButton(DriveStationConstants::buttonjNames::button2))
+		if (m_joystick->GetRawButton(DriveStationConstants::buttonjNames::button2))
 		{
-			m_state = OFF;
 			break;
 		}
+		m_state = OFF;
 		break;
 
 	case OFF:
 		stop();
-		if (m_gamepad->GetRawButton(DriveStationConstants::buttonjNames::button2))
+		if (m_joystick->GetRawButton(DriveStationConstants::buttonjNames::button2))
 		{
 			m_state = ON;
+			break;
+		}
+		m_state = IDLE;
+		break;
+
+	case AUTO:
+		autoShoot();
+		if (m_joystick->GetRawButton(DriveStationConstants::buttonjNames::trigger))
+		{
 			break;
 		}
 		m_state = IDLE;

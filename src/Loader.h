@@ -25,17 +25,25 @@ public:
 			Joystick * joystick);
 
 	virtual ~Loader();
-
 	void run();
+	void stop();
+	void load();
+	void unLoad();
+
+	// Getters
+	bool sensorChange();
+//	state getState(state state);
+	bool getSenserState();
+
+	// Setters
 	void setState(state state);
+
 private:
 	Talon * m_motor;
 	DigitalInput * m_lightSensor;
 	Joystick * m_gamepad;
 	Joystick * m_joystick;
 
-	bool sensorChange();
-	void stop();
 	state m_state;
 	bool m_oldSensorState;
 
