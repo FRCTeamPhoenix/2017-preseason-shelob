@@ -21,7 +21,7 @@ m_joystick(joystick),
 m_robotDrive(m_FL_WHEEL_MOTOR,m_BL_WHEEL_MOTOR,m_FR_WHEEL_MOTOR,m_BR_WHEEL_MOTOR)
 {
 	// TODO Auto-generated constructor stub
-	m_state = DriveTrain::state::Idle;
+	m_state = DriveTrain::state::IDLE;
 }
 
 // This enables the saftey mode on the robot drive train.
