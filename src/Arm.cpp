@@ -44,7 +44,7 @@ void Arm::run()
 	logVoltage();
 	switch (m_state)
 	{
-	case Idle:
+	case Idle: //Stops, if joystick moves, sets state to joystick control, otherwise breaks.
 		stop();
 		if (m_gamepadJoystickY)
 		{
@@ -52,6 +52,9 @@ void Arm::run()
 		}
 		break;
 	case Joystick_Control:
+	    /*Controls the motors according to joystick values, sets the state to idle if they've reached the limit,
+	     * otherwise sets the state to idle if the joystick is at 0
+	     */
 		m_leftArmMotor->Set((m_gamepadJoystickY * 0.5));
 		m_rightArmMotor->Set((m_gamepadJoystickY * 0.5));
 		if (((m_gamepadJoystickY > 0)  && checkUpperLimit() )  ||
@@ -69,7 +72,7 @@ void Arm::run()
 	}
 }
 
-bool Arm::checkLowerLimit()
+bool Arm::checkLowerLimit() //Checks if the arms have reached the lower limit
 {
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
@@ -80,7 +83,7 @@ bool Arm::checkLowerLimit()
 	return (belowLimitLeft && belowLimitRight);
 }
 
-bool Arm::checkUpperLimit()
+bool Arm::checkUpperLimit() //Checks if the arms have reached the upper limit
 {
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
@@ -114,7 +117,7 @@ void Arm::stop()
 	m_rightArmMotor->Set(0);
 }
 
-void Arm::getGamepadWithDeadzone()
+void Arm::getGamepadWithDeadzone() //Gets the joystick Y axis
 {
 	m_gamepadJoystickY = -m_gamepad->GetY();
 	if (fabs(m_gamepadJoystickY) < 0.05f)
@@ -133,7 +136,7 @@ bool Arm::getArmJoystickButton(int buttonCode)
 	return m_armButton[buttonCode];
 }
 
-void Arm::putDown()
+void Arm::putDown() //Puts the arms down
 {
 	if (checkUpperLimit() || checkLowerLimit())
 	{
@@ -146,7 +149,7 @@ void Arm::putDown()
 	}
 }
 
-bool Arm::touchedBottom() {
+bool Arm::touchedBottom() { //Checks if the arms have touched the bottom
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_rightLLimit = RobotConstants::minSaftLimitRight;
@@ -156,7 +159,7 @@ bool Arm::touchedBottom() {
 	return bottomLimit;
 }
 
-bool Arm::touchedTop() {
+bool Arm::touchedTop() { //Checks if the arms have touched the top
 	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
 	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
 	m_rightULimit = RobotConstants::maxSaftLimitRight;
@@ -166,28 +169,28 @@ bool Arm::touchedTop() {
 	return outsideLimit;
 }
 
-void Arm::rUp() {
+void Arm::rUp() { //Moves the right arm up
 	if (touchedTop()) {
 		stop();
 	}
 	m_rightArmMotor->Set(1.0f);
 }
 
-void Arm::rDown() {
+void Arm::rDown() { //Moves the right arm down
 	if (touchedBottom()) {
 		stop();
 	}
 	m_rightArmMotor->Set(-1.0f);
 }
 
-void Arm::lUp() {
+void Arm::lUp() { //Moves the left arm up
 	if (touchedTop()) {
 		stop();
 	}
 	m_leftArmMotor->Set(1.0f);
 }
 
-void Arm::lDown() {
+void Arm::lDown() { //Moves the left arm down
 	if (touchedBottom()) {
 		stop();
 	}

@@ -23,28 +23,28 @@ Loader::Loader(
 	m_state = Idle;
 }
 
-bool Loader::sensorChange()
+bool Loader::sensorChange() //Tracks the sensor value
 {
 	return(m_oldSensorState != m_lightSensor->Get());
 }
 
-bool Loader::getSenserState()
+bool Loader::getSensorState() //Gets sensor state
 {
 	return m_oldSensorState;
 }
 
-void Loader::setState(state state)
+void Loader::setState(state state) //Used to set the state
 {
 	m_state = state;
 }
 
-void Loader::load()
+void Loader::load() //Loads a ball
 {
 	m_motor->Set(-1.0f);
 	Wait(0.01f);
 }
 
-void Loader::unLoad()
+void Loader::unLoad() //Unloads a ball
 {
 	m_motor->Set(1.0f);
 }

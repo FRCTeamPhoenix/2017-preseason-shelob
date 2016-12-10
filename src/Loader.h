@@ -33,7 +33,7 @@ public:
 	// Getters
 	bool sensorChange();
 //	state getState(state state);
-	bool getSenserState();
+	bool getSensorState();
 
 	// Setters
 	void setState(state state);
