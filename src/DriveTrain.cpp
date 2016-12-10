@@ -12,8 +12,7 @@ DriveTrain::DriveTrain(
 		Talon * FL_WHEEL_MOTOR,
 		Talon * FR_WHEEL_MOTOR,
 		Talon * BR_WHEEL_MOTOR,
-		Joystick * joystick
-):
+		Joystick * joystick):
 m_BL_WHEEL_MOTOR(BL_WHEEL_MOTOR),
 m_BR_WHEEL_MOTOR(BR_WHEEL_MOTOR),
 m_FL_WHEEL_MOTOR(FL_WHEEL_MOTOR),
@@ -25,6 +24,7 @@ m_robotDrive(m_FL_WHEEL_MOTOR,m_BL_WHEEL_MOTOR,m_FR_WHEEL_MOTOR,m_BR_WHEEL_MOTOR
 	m_state = DriveTrain::state::Idle;
 }
 
+// This enables the saftey mode on the robot drive train.
 void DriveTrain::safety()
 {
 	m_robotDrive.SetSafetyEnabled(false);
@@ -33,9 +33,10 @@ void DriveTrain::safety()
 // joystick throttle is meant to be used as a resistance for the driver train.
 // added throttle function
 void DriveTrain::joystickWithThrottle() {
-	 m_joystickThrottle = -(0.5 * m_joystick->GetThrottle()) + 0.5;
+	m_joystickThrottle = -(0.5 * m_joystick->GetThrottle()) + 0.5;
 }
 
+// Joystick update the Y Axis
 void DriveTrain::joystickWithDeadZoneY()
 {
 	m_joystickY = -m_joystick->GetY();//* m_joystickThrottle;
@@ -46,6 +47,7 @@ void DriveTrain::joystickWithDeadZoneY()
 	m_joystickY = m_joystickY * m_joystickThrottle;
 }
 
+// Joystick update the z Axis
 void DriveTrain::joystickWithDeadZoneZ()
 {
 	m_joystickZ = m_joystick->GetZ();
@@ -68,10 +70,11 @@ void DriveTrain::stop()
 void DriveTrain::move()
 {
 	m_robotDrive.TankDrive((m_joystickY + m_joystickZ),(m_joystickY - m_joystickZ));
-//	m_robotDrive.TankDrive(m_joystickZ,m_joystickZ);
+	//	m_robotDrive.TankDrive(m_joystickZ,m_joystickZ);
 }
 
-bool DriveTrain::isMoving() {
+// Checks if the joystick is moving
+bool DriveTrain::joystickMoving() {
 	// TODO Move Constants
 	if ((m_joystickY && m_joystickZ))
 	{
@@ -83,6 +86,7 @@ bool DriveTrain::isMoving() {
 	}
 }
 
+// Checks if the joystick is movoing for the drive train to move
 bool DriveTrain::moving() {
 	// TODO Move Constants
 	if ((m_joystickY || m_joystickZ))
@@ -96,31 +100,35 @@ bool DriveTrain::moving() {
 }
 
 
-
+// Run function is like main()
 void DriveTrain::run()
 {
+	// Updating the joystick input data
 	joystickWithThrottle();
 	joystickWithDeadZoneY();
 	joystickWithDeadZoneZ();
 	switch (m_state)
 	{
-	case Idle:
+	// Robot not moving
+	case IDLE:
 		stop();
-		if (!isMoving())
+		if (!joystickMoving())
 		{
 			break;
 		}
-		m_state = Controll;
+		m_state = CONTROLL;
 		break;
 
-	case Controll:
+	// When the robot is moving
+	case CONTROLL:
 		move();
 		if (moving())
 		{
 			break;
 		}
-		m_state = Idle;
+		m_state = IDLE;
 		break;
+
 	}
 }
 

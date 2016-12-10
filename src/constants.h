@@ -37,7 +37,8 @@ enum buttonjNames
 {
 	// This is for joystick
 	trigger = 1,
-	button2 = 2
+	button2 = 2,
+	button3 = 3
 };
 };
 

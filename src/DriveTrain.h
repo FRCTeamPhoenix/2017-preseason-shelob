@@ -34,17 +34,18 @@ public:
 	virtual ~ DriveTrain();
 	void run();     // This turns the motors on
 	void move();    // This is controlled by the joystick
-	void stop();
-	void joystickWithDeadZoneY();
-	void joystickWithDeadZoneZ();
-	void joystickWithThrottle();
-	void safety();
-	bool isMoving();
-	bool moving();
+	void stop();  // Stoping the motors on the drive train
+	void joystickWithDeadZoneY(); // Gets the joystick Y
+	void joystickWithDeadZoneZ(); // Gets the joystick Z
+	void joystickWithThrottle(); // Gets the joystick Throttle
+	void safety(); // Enables saftey mode for you to move the drive train.
+	bool joystickMoving(); // Checking to see if the joystick are not moving.
+	bool moving(); // Checking to see if the joystick is moving.
 
-	enum state {
-		Idle,
-		Controll
+	enum state
+	{
+		IDLE,
+		CONTROLL
 	};
 
 

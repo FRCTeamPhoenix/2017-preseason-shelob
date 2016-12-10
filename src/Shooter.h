@@ -16,7 +16,11 @@ class Shooter
 	bool m_isActivated;
 
 public:
-	Shooter(Talon * leftFlywheelMotor, Talon * rightFlywheelMotor, Joystick * joystick, Loader * loader);
+	Shooter(
+			Talon * leftFlywheelMotor,
+			Talon * rightFlywheelMotor,
+			Joystick * joystick,
+			Loader * loader);
 	virtual ~Shooter();
 
 
@@ -28,11 +32,11 @@ public:
 		AUTO
 	};
 
-	void run();
-	void start();
-	void stop();
-	state getCurrentState();
-	void autoShoot();
+	void run(); // Works like a main() function
+	void start(); // Starts the fly wheels
+	void stop(); // Stops the fly wheels
+	state getCurrentState(); // Gets the current state of the fly wheels
+	void autoShoot(); // The auto shoot function works for when you press that special button
 
 
 private:

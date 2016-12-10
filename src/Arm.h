@@ -46,6 +46,15 @@ public:
 	bool checkUpperLimit(); // Limit check Up
 	void setState(); // Change state
 	void stop(); // Stop the robot
+	void putDown(); // Puts the arms down to the bottom
+	void rUp(); // moves the right arm up
+	void rDown(); // moves the right arm down
+	void lUp(); // moves the left arm up
+	void lDown(); // moves the left arm down
+	bool touchedTop(); // if arm touches top
+	bool touchedBottom(); // if arm touches bottom
+
+
 
 	bool getArmJoystickButton(int); // Joystick Button
 

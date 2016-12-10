@@ -20,18 +20,18 @@ Arm::Arm(
 		Talon * leftArmMotor,
 		Talon * rightArmMotor,
 		Joystick * gamepad
-//		Joystick * armJoystick
-		):
-		m_leftPotentiometer(leftPotentiometer),
-		m_rightPotentiometer(rightPotentiometer),
-		m_leftLowerLimit(leftLowerLimit),
-		m_leftUpperLimit(leftUpperLimit),
-		m_rightLowerLimit(rightLowerLimit),
-		m_rightUpperLimit(rightUpperLimit),
-		m_leftArmMotor(leftArmMotor),
-		m_rightArmMotor(rightArmMotor),
-		m_gamepad(gamepad)
-		//m_armJoystick(armJoystick)
+		//		Joystick * armJoystick
+):
+m_leftPotentiometer(leftPotentiometer),
+m_rightPotentiometer(rightPotentiometer),
+m_leftLowerLimit(leftLowerLimit),
+m_leftUpperLimit(leftUpperLimit),
+m_rightLowerLimit(rightLowerLimit),
+m_rightUpperLimit(rightUpperLimit),
+m_leftArmMotor(leftArmMotor),
+m_rightArmMotor(rightArmMotor),
+m_gamepad(gamepad)
+//m_armJoystick(armJoystick)
 {
 	// TODO Auto-generated constructor stub
 	m_state = Arm::state::Idle;
@@ -102,10 +102,10 @@ void Arm::logVoltage()
 
 	bool outsideLimitLeft = (leftCurrentVoltage >= m_leftULimit) || (leftCurrentVoltage <= m_leftLLimit);
 	bool outsideLimitRight = (rightCurrentVoltage >= m_rightULimit) || (rightCurrentVoltage <= m_rightLLimit);
-	LOGD << "RIGHT VOLTAGE: " << rightCurrentVoltage;
-	LOGD << "LEFT VOLTAGE: " << leftCurrentVoltage;
-	LOGD << "RIGHT LIMIT: " << outsideLimitRight;
-	LOGD << "LEFT LIMIT: " << outsideLimitLeft;
+//	LOGD << "RIGHT VOLTAGE: " << rightCurrentVoltage;
+//	LOGD << "LEFT VOLTAGE: " << leftCurrentVoltage;
+//	LOGD << "RIGHT LIMIT: " << outsideLimitRight;
+//	LOGD << "LEFT LIMIT: " << outsideLimitLeft;
 }
 
 void Arm::stop()
@@ -131,6 +131,67 @@ bool Arm::getArmJoystickButton(int buttonCode)
 	}
 
 	return m_armButton[buttonCode];
+}
+
+void Arm::putDown()
+{
+	if (checkUpperLimit() || checkLowerLimit())
+	{
+		stop();
+	}
+	else
+	{
+		m_leftArmMotor->Set(-1.0f);
+		m_rightArmMotor->Set(-1.0f);
+	}
+}
+
+bool Arm::touchedBottom() {
+	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
+	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
+	m_rightLLimit = RobotConstants::minSaftLimitRight;
+	m_leftLLimit = RobotConstants::minSaftLimitLeft;
+
+	bool bottomLimit = ((rightCurrentVoltage <= m_rightLLimit) || (leftCurrentVoltage <= m_leftLLimit));
+	return bottomLimit;
+}
+
+bool Arm::touchedTop() {
+	float rightCurrentVoltage = m_rightPotentiometer->GetVoltage();
+	float leftCurrentVoltage = m_leftPotentiometer->GetVoltage();
+	m_rightULimit = RobotConstants::maxSaftLimitRight;
+	m_leftULimit = RobotConstants::maxSaftLimitLeft;
+
+	bool outsideLimit = ((rightCurrentVoltage >= m_rightULimit) || (leftCurrentVoltage >= m_leftULimit));
+	return outsideLimit;
+}
+
+void Arm::rUp() {
+	if (touchedTop()) {
+		stop();
+	}
+	m_rightArmMotor->Set(1.0f);
+}
+
+void Arm::rDown() {
+	if (touchedBottom()) {
+		stop();
+	}
+	m_rightArmMotor->Set(-1.0f);
+}
+
+void Arm::lUp() {
+	if (touchedTop()) {
+		stop();
+	}
+	m_leftArmMotor->Set(1.0f);
+}
+
+void Arm::lDown() {
+	if (touchedBottom()) {
+		stop();
+	}
+	m_leftArmMotor->Set(-1.0f);
 }
 
 Arm::~Arm() {

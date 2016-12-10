@@ -7,6 +7,8 @@
 
 #include "Shooter.h"
 
+// TODO comment for the code
+
 Shooter::Shooter(
 		Talon * leftFlywheelMotor,
 		Talon * rightFlywheelMotor,
