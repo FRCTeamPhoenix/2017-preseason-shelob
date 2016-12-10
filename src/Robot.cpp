@@ -71,13 +71,13 @@ public:
 	}
 	void OperatorControl()
 	{
-		m_driveTrain.safety();
+		m_driveTrain.safety(); // Enable drive train saftey mode
 		while(IsOperatorControl() && IsEnabled())
 		{
-			m_driveTrain.run();
-			m_arm.run();
-			m_loader.run();
-			m_shooter.run();
+			m_driveTrain.run(); // Drive Tain Run
+			m_arm.run(); // Arm Run
+			m_loader.run(); // Loader Run
+			m_shooter.run(); // Shooter Run
 		}
 	}
 	void Test()
